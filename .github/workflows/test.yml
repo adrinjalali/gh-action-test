@@ -12,7 +12,7 @@ jobs:
   pytest:
 
     runs-on: ${{ matrix.os }}
-    if: ${{ (github.repository == 'skops-dev/skops') && contains(github.event.head_commit.message, '\[CI inference\]') }}
+    if: ${{ (github.repository == 'adrinjalali/gh-action-test') && contains(github.event.head_commit.message, '\[CI inference\]') }}
     strategy:
       fail-fast: true
       matrix:
