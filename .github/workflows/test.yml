@@ -48,6 +48,9 @@ jobs:
     steps:
     - uses: hmarr/debug-action@v2
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        ref: ${{github.event.after}}
     - run: echo "PR_COMMIT_MESSAGE=`git log -1 --pretty=format:\"%s\"`" >> $GITHUB_ENV
     - run: echo "$PR_COMMIT_MESSAGE"
     - name: Set up Python ${{ matrix.python }}
