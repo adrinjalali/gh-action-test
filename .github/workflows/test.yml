@@ -56,7 +56,7 @@ jobs:
     - run: echo PR_COMMIT_MESSAGE=$(git log -1 --pretty=format:\"%s\") >> $GITHUB_ENV
     - run: echo $PR_COMMIT_MESSAGE
     - name: Set up Python ${{ matrix.python }}
-      if: {{ !contains(env.PR_COMMIT_MESSAGE, '[CI inference]') }}
+      if: {{ contains(env.PR_COMMIT_MESSAGE, '[CI inference]') }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python }}
