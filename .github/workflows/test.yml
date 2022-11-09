@@ -9,42 +9,36 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  has-it:
+  main_job:
 
     runs-on: ${{ matrix.os }}
-    if: ${{ (github.repository == 'adrinjalali/gh-action-test') && contains(github.event.head_commit.message, '[CI inference]') }}
+    if: ${{ (github.repository == 'adrinjalali/gh-action-test') }}
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python: ["3.7", "3.8", "3.9", "3.10"]
+        python: ["3.7", "3.10"]
 
     # Timeout: https://stackoverflow.com/a/59076067/4521646
     timeout-minutes: 15
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        ref: ${{github.event.after}}    
+    - run: |
+        echo PR_COMMIT_MESSAGE=$(git log -1 --pretty=format:\"%s\") >> $GITHUB_ENV
+      shell: bash
+    - run: echo $PR_COMMIT_MESSAGE
     - name: Set up Python ${{ matrix.python }}
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python }}
-
-  has-it-not:
-
-    runs-on: ${{ matrix.os }}
-    if: ${{ (github.repository == 'adrinjalali/gh-action-test') && !contains(github.event.head_commit.message, '[CI inference]') }}
-    strategy:
-      fail-fast: true
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        python: ["3.7", "3.8", "3.9", "3.10"]
-
-    # Timeout: https://stackoverflow.com/a/59076067/4521646
-    timeout-minutes: 15
-
-    steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python }}
+    - run: |
+        echo "Always"
+      name: Always runs
+    - run: |
+        echo "Conditional"
+      name: Conditional
+      if: contains(env.PR_COMMIT_MESSAGE, '[CI inference]')
