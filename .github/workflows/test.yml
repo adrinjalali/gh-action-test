@@ -43,6 +43,7 @@ jobs:
     timeout-minutes: 15
 
     steps:
+    - uses: hmarr/debug-action@v2
     - uses: actions/checkout@v3
     - run: echo `git log -1 --pretty=format:"%s"`
     - name: Set up Python ${{ matrix.python }}
