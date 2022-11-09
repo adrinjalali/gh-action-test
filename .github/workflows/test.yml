@@ -46,13 +46,12 @@ jobs:
     timeout-minutes: 15
 
     steps:
-    - name: Get PR Commits
-      id: 'get-pr-commits'
-      uses: tim-actions/get-pr-commits@master
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}    
     - uses: actions/checkout@v3
-    - run: echo ${{ steps.get-pr-commits.outputs.commits[0] }}
+      with:
+        fetch-depth: 0
+        ref: ${{github.event.after}}    
+    - run: echo PR_COMMIT_MESSAGE=$(git log -1 --pretty=format:\"%s\"`") >> $GITHUB_ENV
+    - run: echo $PR_COMMIT_MESSAGE
     - name: Set up Python ${{ matrix.python }}
       if: contains(steps.get-pr-commits.outputs.commits[0], '[CI inference]')
       uses: actions/setup-python@v3
