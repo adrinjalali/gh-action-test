@@ -43,6 +43,7 @@ jobs:
     timeout-minutes: 15
 
     steps:
+    - run: echo `git log -1 --pretty=format:"%s"`
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python }}
       uses: actions/setup-python@v3
