@@ -31,7 +31,7 @@ jobs:
     - run: echo $PR_COMMIT_MESSAGE
     - name: Set up Python ${{ matrix.python }}
       if: contains(env.PR_COMMIT_MESSAGE, '[CI inference]')
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python }}
 
@@ -57,6 +57,6 @@ jobs:
     - run: echo $PR_COMMIT_MESSAGE
     - name: Set up Python ${{ matrix.python }}
       if: contains(env.PR_COMMIT_MESSAGE, '[CI inference]')
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python }}
