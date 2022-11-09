@@ -32,7 +32,7 @@ jobs:
   has-it-not:
 
     runs-on: ${{ matrix.os }}
-    if: ${{ (github.repository == 'adrinjalali/gh-action-test') && !contains(github.commits[0].message, '[CI inference]') }}
+    if: ${{ (github.repository == 'adrinjalali/gh-action-test') && !contains(github.events.commits[0].message, '[CI inference]') }}
     strategy:
       fail-fast: true
       matrix:
