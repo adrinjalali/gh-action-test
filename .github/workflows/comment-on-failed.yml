@@ -32,6 +32,20 @@ jobs:
                     run_id: runId,
                 });
                 console.log(JSON.stringify(data, null, 2));
+        - name: Fetch output from other workflow
+          uses: actions/github-script@v6
+          with:
+              github-token: ${{ secrets.GITHUB_TOKEN }}
+              script: |
+                  const workflowId = ${{ github.event.workflow_run.id }};
+                  const jobName = 'lint';
+                  const runId = context.payload.workflow_run.id;
+                  const { data } = await github.rest.actions.downloadJobLogsForWorkflowRun({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      run_id: runId,
+                  });
+                  console.log(JSON.stringify(data, null, 2));
         - name: Comment on pull request
           uses: actions/github-script@v6
           with:
