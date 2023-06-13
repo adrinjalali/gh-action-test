@@ -19,7 +19,7 @@ jobs:
             token: ${{ secrets.GITHUB_TOKEN }}
             sourceRunId: ${{ github.event.workflow_run.id }}
         - name: Fetch output from other workflow
-          uses: actions/github-script@v3
+          uses: actions/github-script@v6
           with:
               github-token: ${{ secrets.GITHUB_TOKEN }}
               script: |
