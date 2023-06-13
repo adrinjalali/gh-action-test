@@ -31,7 +31,7 @@ jobs:
                     repo: context.repo.repo,
                     run_id: runId,
                 });
-                console.log(toJson(data));
+                console.log(JSON.stringify(data, null, 2));
         - name: Comment on pull request
           uses: actions/github-script@v6
           with:
