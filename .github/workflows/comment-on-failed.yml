@@ -26,10 +26,9 @@ jobs:
                 const workflowId = ${{ github.event.workflow_run.id }};
                 const jobName = 'lint';
                 const runId = context.payload.workflow_run.id;
-                const { data } = await github.actions.getWorkflowJob({
+                const { data } = await github.actions.getWorkflowRun({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
-                    job_id: jobName,
                     run_id: runId,
                 });
                 console.log(toJson(data));
