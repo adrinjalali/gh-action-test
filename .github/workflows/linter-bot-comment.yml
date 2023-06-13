@@ -23,7 +23,10 @@ jobs:
           pip install pytest flake8 $(get_dep mypy min) $(get_dep black min) cython-lint
 
       - name: Run linting
-        run: ./build_tools/linting.sh
+        run: |
+          ./build_tools/linting.sh >> $OUTPUT
+          echo "OUTPUT=$OUTPUT" >> $GITHUB_ENV
+
 
   comment:
     needs: [lint]
