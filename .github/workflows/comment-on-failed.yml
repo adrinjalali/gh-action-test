@@ -2,7 +2,7 @@ name: Comment on failed linting
 
 on:
   workflow_run:
-    workflows: ["Lint"]
+    workflows: ["linter-bot-comment"]
     types:
       - completed
   pull_request_target:
