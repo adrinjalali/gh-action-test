@@ -40,10 +40,11 @@ jobs:
                   const workflowId = ${{ github.event.workflow_run.id }};
                   const jobName = 'lint';
                   const runId = context.payload.workflow_run.id;
-                  const { data } = await github.rest.actions.downloadWorkflowRunLogs({
-                      owner: context.repo.owner,
-                      repo: context.repo.repo,
-                      run_id: runId,
+                  const { data } = await github.rest.actions.downloadJobLogsForWorkflowRun({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        job_id: jobName,
+                        run_id: runId,
                   });
                   console.log(JSON.stringify(data, null, 2));
         - name: Comment on pull request
