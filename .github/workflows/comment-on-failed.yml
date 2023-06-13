@@ -18,6 +18,21 @@ jobs:
           with:
             token: ${{ secrets.GITHUB_TOKEN }}
             sourceRunId: ${{ github.event.workflow_run.id }}
+        - name: Fetch output from other workflow
+          uses: actions/github-script@v3
+          with:
+              github-token: ${{ secrets.GITHUB_TOKEN }}
+              script: |
+                const workflowId = ${{ github.event.workflow_run.id }};
+                const jobName = 'lint';
+                const runId = context.payload.workflow_run.id;
+                const { data } = await github.actions.getWorkflowJob({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    job_id: jobName,
+                    run_id: runId,
+                });
+                console.log(toJson(data));
         - name: Comment on pull request
           uses: actions/github-script@v6
           with:
