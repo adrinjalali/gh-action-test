@@ -11,6 +11,8 @@ jobs:
     if: ${{ github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion == 'failure' }}
     runs-on: ubuntu-latest
     steps:
+        - run: echo ${{ github.event.workflow_run.jobs.lint.outputs }}
+        - run: echo ${{ github.event.workflow_run.pull_requests }}
         - name: Comment on pull request
           uses: actions/github-script@v6
           with:
