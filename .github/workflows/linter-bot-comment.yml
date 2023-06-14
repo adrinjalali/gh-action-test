@@ -27,6 +27,7 @@ jobs:
           ./build_tools/linting.sh > /tmp/linting_output.txt
     
       - name: Upload Artifact
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: lint-log
