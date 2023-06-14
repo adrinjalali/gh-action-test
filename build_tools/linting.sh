@@ -11,7 +11,8 @@ echo -e "### Running black ###\n"
 black --check --diff .
 status=$?
 
-if [ $status -e 0 ]
+if [[ $status -eq 0 ]]
+then
     echo -e "No problem detected by black\n"
 else
     echo -e "Problems detected by black, please run black and commit the result\n"
@@ -21,7 +22,8 @@ fi
 echo -e "### Running flake8 ###\n"
 flake8 --show-source .
 status=$?
-if [ $status -e 0 ]
+if [[ $status -eq 0 ]]
+then
     echo -e "No problem detected by flake8\n"
 else
     echo -e "Problems detected by flake8, please fix them\n"
@@ -31,7 +33,8 @@ fi
 echo -e "### Running mypy ###\n"
 mypy sklearn/
 status=$?
-if [ $status -e 0 ]
+if [[ $status -eq 0 ]]
+then
     echo -e "No problem detected by mypy\n"
 else
     echo -e "Problems detected by mypy, please fix them\n"
@@ -41,7 +44,8 @@ fi
 echo -e "### Running cython-lint ###\n"
 cython-lint sklearn/
 status=$?
-if [ $status -e 0 ]
+if [[ $status -eq 0 ]]
+then
     echo -e "No problem detected by cython-lint\n"
 else
     echo -e "Problems detected by cython-lint, please fix them\n"
@@ -96,14 +100,14 @@ if [ ! -z "$joblib_Parallel_import" ]; then
     joblib_status=1
 fi
 
-if [ $joblib_status -e 0 ]
+if [[ $joblib_status -eq 0 ]]
 then
     echo -e "No problems detected related to joblib imports\n"
 else
     global_status=1
 fi
 
-if [ $global_status -e 1 ]
+if [[ $global_status -eq 1 ]]
 then
     echo -e "Linting failed\n"
     exit 1
