@@ -33,29 +33,3 @@ jobs:
           name: lint-log
           path: /tmp/linting_output.txt
           retention-days: 1
-
-
-  # comment:
-  #   needs: [lint]
-  #   if: ${{ always() && needs.lint.result == 'failure' }}
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Comment on pull request
-  #       uses: actions/github-script@v6
-  #       with:
-  #         github-token: ${{secrets.GITHUB_TOKEN}}
-  #         script: |
-  #           const failedJobs = '${{ needs.lint.outputs }}';
-  #           let message = `Linter is failing on your pull request. Please enable pre-commit hooks (info under this link: ...) \n\n`;
-  #           if (failedJobs.includes('isort')) {
-  #             message += `For the issue with isort, you can run:\n\n\`isort .\`\n\nAnd then commit the changes:\n\n\`git commit -am "ran isort"\`\n\`git push\`\n`;
-  #           }
-  #           if (failedJobs.includes('black')) {
-  #             message += `For the issue with black, you can run:\n\n\`black .\`\n\nAnd then commit the changes:\n\n\`git commit -am "ran black"\`\n\`git push\`\n`;
-  #           }
-  #           github.rest.issues.createComment({
-  #             issue_number: context.issue.number,
-  #             owner: context.repo.owner,
-  #             repo: context.repo.repo,
-  #             body: message,
-  #           })
