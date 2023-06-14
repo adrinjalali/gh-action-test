@@ -41,7 +41,7 @@ jobs:
         - name: Show Logs
           id: show-logs
           run: |
-            ls -la lint-log
+            cat linting_output.txt
         - name: Comment on pull request
           uses: actions/github-script@v6
           with:
