@@ -32,21 +32,16 @@ jobs:
                     run_id: runId,
                 });
                 console.log(JSON.stringify(data, null, 2));
-        - name: Fetch output from other workflow
-          uses: actions/github-script@v6
+        - name: Download artifact
+          id: download-artifact
+          uses: dawidd6/action-download-artifact@v2
           with:
-              github-token: ${{ secrets.GITHUB_TOKEN }}
-              script: |
-                  const workflowId = ${{ github.event.workflow_run.id }};
-                  const jobName = 'lint';
-                  const runId = context.payload.workflow_run.id;
-                  const { data } = await github.rest.actions.downloadJobLogsForWorkflowRun({
-                        owner: context.repo.owner,
-                        repo: context.repo.repo,
-                        job_id: jobName,
-                        run_id: runId,
-                  });
-                  console.log(JSON.stringify(data, null, 2));
+            run_id: ${{ github.event.workflow_run.id }}
+            name: lint-log
+        - name: Show Logs
+          id: show-logs
+          run: |
+            ls -la lint-log
         - name: Comment on pull request
           uses: actions/github-script@v6
           with:
