@@ -71,7 +71,7 @@ def main():
         log,
         start="### Checking for bad deprecation order ###",
         end="Problems detected by deprecation order check",
-        title="Deprecation Order"
+        title="Deprecation Order",
         message=(
             "Deprecation order check detected issues. Please fix them locally and "
             "push the changes. Here you can see the detected issues."
@@ -83,7 +83,7 @@ def main():
         log,
         start="### Checking for default doctest directives ###",
         end="Problems detected by doctest directive check",
-        title="Doctest Directives"
+        title="Doctest Directives",
         message=(
             "doctest directive check detected issues. Please fix them locally and "
             "push the changes. Here you can see the detected issues."
@@ -95,7 +95,7 @@ def main():
         log,
         start="### Checking for joblib imports ###",
         end="Problems detected by joblib import check",
-        title="Joblib Imports"
+        title="Joblib Imports",
         message=(
             "`joblib` import check detected issues. Please fix them locally and "
             "push the changes. Here you can see the detected issues."
