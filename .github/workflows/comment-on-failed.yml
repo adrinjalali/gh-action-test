@@ -47,7 +47,7 @@ jobs:
           # This step "fails" with exit code 1 if no comments are to be posted.
           # Therefore the next step wouldn't run.
           run: |
-            python ./build_tools/get_comments.py > comments.txt
+            python ./build_tools/get_comment.py > comments.txt
         - name: Comment on pull request
           uses: actions/github-script@v6
           with:
