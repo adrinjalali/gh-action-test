@@ -25,7 +25,8 @@ jobs:
       - name: Run linting
         run: |
           ./build_tools/linting.sh &> /tmp/linting_output.txt
-    
+          cat /tmp/linting_output.txt
+
       - name: Upload Artifact
         if: always()
         uses: actions/upload-artifact@v3
