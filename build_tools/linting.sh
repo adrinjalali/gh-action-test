@@ -64,6 +64,7 @@ then
     echo "property decorator should come before deprecated decorator"
     echo "found the following occurrences:"
     echo $bad_deprecation_property_order
+    echo -e "\nProblems detected by deprecation order check\n"
     global_status=1
 else
     echo -e "No problems detected related to deprecation order\n"
@@ -78,6 +79,7 @@ if [ ! -z "$doctest_directive" ]
 then
     echo "ELLIPSIS and NORMALIZE_WHITESPACE doctest directives are enabled by default, but were found in:"
     echo "$doctest_directive"
+    echo -e "\nProblems detected by doctest directive check\n"
     global_status=1
 else
     echo -e "No problems detected related to doctest directives\n"
@@ -104,6 +106,7 @@ if [[ $joblib_status -eq 0 ]]
 then
     echo -e "No problems detected related to joblib imports\n"
 else
+    echo -e "\nProblems detected by joblib import check\n"
     global_status=1
 fi
 
