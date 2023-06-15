@@ -1,4 +1,4 @@
-name: linter-bot-comment
+name: linter
 
 on:
   - pull_request
