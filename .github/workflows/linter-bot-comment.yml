@@ -23,9 +23,11 @@ jobs:
           pip install pytest flake8 $(get_dep mypy min) $(get_dep black min) cython-lint
 
       - name: Run linting
-        run: |
-          ./build_tools/linting.sh &> /tmp/linting_output.txt
-          cat /tmp/linting_output.txt
+        run: ./build_tools/linting.sh &> /tmp/linting_output.txt
+
+      - name: Print log
+        if: always()
+        run: cat /tmp/linting_output.txt
 
       - name: Upload Artifact
         if: always()
