@@ -2,7 +2,7 @@ name: Comment on failed linting
 
 on:
   workflow_run:
-    workflows: ["linter-bot-comment"]
+    workflows: ["linter"]
     types:
       - completed
     
@@ -25,24 +25,26 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           sourceRunId: ${{ github.event.workflow_run.id }}
+
       - name: Download artifact
         id: download-artifact
         uses: dawidd6/action-download-artifact@v2
         with:
           run_id: ${{ github.event.workflow_run.id }}
           name: lint-log
+  
       - name: Show Logs
         id: show-logs
         run: |
           cat linting_output.txt
+
       - name: Get comments
         id: get-comments
         # This step "fails" with exit code 1 if no comments are to be posted.
         # Therefore the next step wouldn't run.
         run: |
-          ls -la
-          ls -la ..
           python ./build_tools/get_comment.py > comments.txt
+
       - name: Comment on pull request
         uses: actions/github-script@v6
         with:
