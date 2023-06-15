@@ -114,7 +114,8 @@ def main():
         "hooks. Instructions to enable them can be found [here]("
         "https://scikit-learn.org/dev/developers/contributing.html#how-to-contribute)."
         "\n\n"
-    ) + message
+        + message
+    )
 
     print(message)
 
