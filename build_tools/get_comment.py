@@ -2,7 +2,7 @@ def get_step_message(log, start, end, title, message):
     if end not in log:
         return ""
     return (
-        "-----------------------------------------------"
+        "-----------------------------------------------\n"
         + f"### {title}\n\n"
         + message
         + "\n\n<details>\n\n```\n"
