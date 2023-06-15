@@ -3,9 +3,9 @@ def get_step_message(log, start, end, message):
         return ""
     return (
         message
-        + "\n\n<details>\n```\n"
+        + "\n\n<details>\n\n```\n"
         + log[log.find(start) + len(start) + 1 : log.find(end) - 1]
-        + "\n```\n</details>\n\n"
+        + "\n```\n\n</details>\n\n"
     )
 
 
