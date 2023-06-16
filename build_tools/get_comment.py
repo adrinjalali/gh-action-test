@@ -1,3 +1,8 @@
+import os
+
+import requests
+
+
 def get_step_message(log, start, end, title, message):
     if end not in log:
         return ""
@@ -11,7 +16,7 @@ def get_step_message(log, start, end, title, message):
     )
 
 
-def main():
+def get_message():
     with open("linting_output.txt", "r") as f:
         log = f.read()
 
@@ -105,7 +110,7 @@ def main():
 
     if not len(message):
         # no issues detected, so this script "fails"
-        exit(1)
+        return None
 
     message = (
         "## Linting issues\n\n"
@@ -117,8 +122,14 @@ def main():
         + message
     )
 
-    print(message)
+    return message
 
+def get_comments():
+    r = requests.get()
+
+def delete_existing_messages():
+    pass
 
 if __name__ == "__main__":
-    main()
+    for key, value in os.environ.items():
+        print(key, value)
