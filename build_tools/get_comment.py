@@ -126,7 +126,7 @@ def get_message():
     return message
 
 
-def get_comments(repo, token):
+def get_comments(repo, token, pr_number):
     # repo is in the form of "org/repo"
     headers = {
         "Accept": "application/vnd.github+json",
@@ -134,7 +134,8 @@ def get_comments(repo, token):
         "X-GitHub-Api-Version": "2022-11-28",
     }
     r = requests.get(
-        f"https://api.github.com/repos/{repo}/pulls/comments", headers=headers
+        f"https://api.github.com/repos/{repo}/issues/{pr_number}/comments",
+        headers=headers,
     )
     return r.json()
 
@@ -146,5 +147,6 @@ def delete_existing_messages():
 if __name__ == "__main__":
     repo = os.environ["GITHUB_REPOSITORY"]
     token = os.environ["GITHUB_TOKEN"]
-    pprint(get_comments(repo, token))
-    
+    pr_number = os.environ["PR_NUMBER"]
+
+    pprint(get_comments(repo, token, pr_number))
