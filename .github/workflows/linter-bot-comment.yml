@@ -1,3 +1,6 @@
+# This linter job on GH actions is used to trigger the commenter bot
+# in bot-lint-comment.yml file. It stores the output of the linter to be used
+# by the commenter bot.
 name: linter
 
 on:

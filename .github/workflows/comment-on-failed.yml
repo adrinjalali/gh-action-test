@@ -1,3 +1,8 @@
+# This action is triggered when the linter (lint.yml) workflow is completed.
+# It will download the artifact (the lint log) from that job, parse it,
+# and create a comment based on it.
+# This is done this way so that the action has permissions to write comments
+# on PRs.
 name: Comment on failed linting
 
 on:
@@ -5,10 +10,10 @@ on:
     workflows: ["linter"]
     types:
       - completed
-    
+
 jobs:
   comment:
-    if: ${{ github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion == 'failure' }}
+    if: ${{ github.event.workflow_run.event == 'pull_request' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -19,6 +24,7 @@ jobs:
         with:
           python-version: 3.11
 
+      # This step is needed to get the pull request number used the last step.
       - name: "Get information about the origin 'CI' run"
         uses: potiuk/get-workflow-origin@v1_5
         id: source-run-info
@@ -32,18 +38,16 @@ jobs:
         with:
           run_id: ${{ github.event.workflow_run.id }}
           name: lint-log
-  
+
       - name: Show Logs
         id: show-logs
-        run: |
-          cat linting_output.txt
+        run: cat linting_output.txt
 
       - name: Get comments
         id: get-comments
         # This step "fails" with exit code 1 if no comments are to be posted.
         # Therefore the next step wouldn't run.
-        run: |
-          python ./build_tools/get_comment.py > comments.txt
+        run: python ./build_tools/get_comment.py > comments.txt
 
       - name: Comment on pull request
         uses: actions/github-script@v6
@@ -58,4 +62,3 @@ jobs:
                   repo: context.repo.repo,
                   body: message,
               })
-  
