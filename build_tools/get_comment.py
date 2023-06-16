@@ -162,7 +162,7 @@ def delete_existing_messages(comments, repo, token):
     print("deleting comments")
     for comment in comments:
         requests.delete(
-            f"https://api.github.com/repos/{repo}/issues/comments/{comment["id"]}",
+            f"https://api.github.com/repos/{repo}/issues/comments/{comment['id']}",
             headers=get_headers(token),
         )
 
