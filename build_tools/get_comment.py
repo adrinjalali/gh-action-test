@@ -137,15 +137,11 @@ def get_headers(token):
     }
 
 
-def get_result(url, token):
-    r = requests.get(url, headers=get_headers(token))
-    return r
-
-
 def get_lint_bot_comments(repo, token, pr_number):
     # repo is in the form of "org/repo"
-    comments = get_result(
-        f"https://api.github.com/repos/{repo}/issues/{pr_number}/comments", token
+    comments = requests.get(
+        f"https://api.github.com/repos/{repo}/issues/{pr_number}/comments",
+        headers=get_headers(token),
     ).json()
 
     failed_comment = "This PR is introducing linting issues. Here's a summary of the"
@@ -166,7 +162,7 @@ def delete_existing_messages(comments, repo, token):
     print("deleting comments")
     for comment in comments:
         requests.delete(
-            f"https://api.github.com/repos/{repo}/issues/comments/{comment[id]}",
+            f"https://api.github.com/repos/{repo}/issues/comments/{comment["id"]}",
             headers=get_headers(token),
         )
 
