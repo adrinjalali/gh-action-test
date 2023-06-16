@@ -46,8 +46,8 @@ jobs:
         id: show-logs
         run: cat linting_output.txt
 
-      - name: Get comments
-        id: get-comments
+      - name: Process Comments
+        id: process-comments
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ steps.source-run-info.outputs.pullRequestNumber }}

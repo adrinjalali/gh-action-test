@@ -129,6 +129,7 @@ def get_message():
 
 
 def get_headers(token):
+    """Get the headers for the GitHub API."""
     return {
         "Accept": "application/vnd.github+json",
         "Authorization": f"Bearer {token}",
@@ -137,6 +138,7 @@ def get_headers(token):
 
 
 def get_lint_bot_comments(repo, token, pr_number):
+    """Get the comments from the linting bot."""
     # repo is in the form of "org/repo"
     comments = requests.get(
         f"https://api.github.com/repos/{repo}/issues/{pr_number}/comments",
@@ -157,6 +159,7 @@ def get_lint_bot_comments(repo, token, pr_number):
 
 
 def delete_existing_messages(comments, repo, token):
+    """Delete the existing messages from the linting bot."""
     # repo is in the form of "org/repo"
     print("deleting comments")
     for comment in comments:
@@ -167,6 +170,7 @@ def delete_existing_messages(comments, repo, token):
 
 
 def create_comment(comment, repo, pr_number, token):
+    """Create a new comment."""
     # repo is in the form of "org/repo"
     print("creating new comment")
     requests.post(
