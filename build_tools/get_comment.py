@@ -139,7 +139,7 @@ def get_headers(token):
 
 def get_result(url, token):
     r = requests.get(url, headers=get_headers(token))
-    return r.json()
+    return r
 
 
 def get_lint_bot_comments(repo, token, pr_number):
