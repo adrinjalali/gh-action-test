@@ -48,20 +48,8 @@ jobs:
 
       - name: Get comments
         id: get-comments
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         # This step "fails" with exit code 1 if no comments are to be posted.
         # Therefore the next step wouldn't run.
-        run: python ./build_tools/get_comment.py > comments.txt
-
-      - name: Comment on pull request
-        uses: actions/github-script@v6
-        with:
-            github-token: ${{secrets.GITHUB_TOKEN}}
-            script: |
-              const fs = require('fs');
-              const message = fs.readFileSync('comments.txt', 'utf8');
-              github.rest.issues.createComment({
-                  issue_number: '${{ steps.source-run-info.outputs.pullRequestNumber }}',
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  body: message,
-              })
+        run: python ./build_tools/get_comment.py
