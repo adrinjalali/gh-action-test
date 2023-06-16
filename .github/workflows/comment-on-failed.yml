@@ -50,6 +50,7 @@ jobs:
         id: get-comments
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.source-run-info.outputs.pullRequestNumber }}
         # This step "fails" with exit code 1 if no comments are to be posted.
         # Therefore the next step wouldn't run.
         run: python ./build_tools/get_comment.py
