@@ -111,7 +111,10 @@ def get_message():
 
     if not len(message):
         # no issues detected, so this script "fails"
-        return None
+        return (
+            "## Linting Passed\n"
+            "All linting checks passed. Your pull request is in excellent shape!"
+        )
 
     message = (
         "## Linting issues\n\n"
@@ -126,22 +129,53 @@ def get_message():
     return message
 
 
-def get_comments(repo, token, pr_number):
-    # repo is in the form of "org/repo"
-    headers = {
+def get_headers(token):
+    return {
         "Accept": "application/vnd.github+json",
         "Authorization": f"Bearer {token}",
         "X-GitHub-Api-Version": "2022-11-28",
     }
-    r = requests.get(
-        f"https://api.github.com/repos/{repo}/issues/{pr_number}/comments",
-        headers=headers,
-    )
+
+
+def get_result(url, token):
+    r = requests.get(url, headers=get_headers(token))
     return r.json()
 
 
-def delete_existing_messages():
-    pass
+def get_lint_bot_comments(repo, token, pr_number):
+    # repo is in the form of "org/repo"
+    comments = get_result(
+        f"https://api.github.com/repos/{repo}/issues/{pr_number}/comments", token
+    ).json()
+
+    failed_comment = "This PR is introducing linting issues. Here's a summary of the"
+    success_comment = (
+        "All linting checks passed. Your pull request is in excellent shape"
+    )
+
+    return [
+        comment
+        for comment in comments
+        if comment["user"]["login"] == "github-actions[bot]"
+        and (failed_comment in comment["body"] or success_comment in comment["body"])
+    ]
+
+
+def delete_existing_messages(comments, repo, token):
+    # repo is in the form of "org/repo"
+    for comment in comments:
+        get_result(
+            f"https://api.github.com/repos/{repo}/issues/comments/{comment[id]}", token
+        )
+
+
+def create_comment(comment, repo, pr_number, token):
+    # repo is in the form of "org/repo"
+    requests.post(
+        f"https://api.github.com/repos/{repo}/issues/{pr_number}/comments",
+        data={"body": comment},
+        headers=get_headers(token),
+    )
 
 
 if __name__ == "__main__":
@@ -149,4 +183,7 @@ if __name__ == "__main__":
     token = os.environ["GITHUB_TOKEN"]
     pr_number = os.environ["PR_NUMBER"]
 
-    pprint(get_comments(repo, token, pr_number))
+    pprint(comments := get_lint_bot_comments(repo, token, pr_number))
+    delete_existing_messages(comments, repo, token)
+    create_comment(message := get_message(), repo, pr_number, token)
+    print(message)
