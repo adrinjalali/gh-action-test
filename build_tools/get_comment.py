@@ -1,4 +1,5 @@
 import os
+from pprint import pprint
 
 import requests
 
@@ -124,12 +125,26 @@ def get_message():
 
     return message
 
-def get_comments():
-    r = requests.get()
+
+def get_comments(repo, token):
+    # repo is in the form of "org/repo"
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "Authorization": f"Bearer {token}",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+    r = requests.get(
+        f"https://api.github.com/repos/{repo}/pulls/comments", headers=headers
+    )
+    return r.json()
+
 
 def delete_existing_messages():
     pass
 
+
 if __name__ == "__main__":
-    for key, value in os.environ.items():
-        print(key, value)
+    repo = os.environ["GITHUB_REPOSITORY"]
+    token = os.environ["GITHUB_TOKEN"]
+    pprint(get_comments(repo, token))
+    
