@@ -172,7 +172,7 @@ def create_comment(comment, repo, pr_number, token):
     print("creating new comment")
     requests.post(
         f"https://api.github.com/repos/{repo}/issues/{pr_number}/comments",
-        data={"body": comment},
+        json={"body": comment},
         headers=get_headers(token),
     )
 
