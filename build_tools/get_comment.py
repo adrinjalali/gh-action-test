@@ -163,14 +163,17 @@ def get_lint_bot_comments(repo, token, pr_number):
 
 def delete_existing_messages(comments, repo, token):
     # repo is in the form of "org/repo"
+    print("deleting comments")
     for comment in comments:
-        get_result(
-            f"https://api.github.com/repos/{repo}/issues/comments/{comment[id]}", token
+        requests.delete(
+            f"https://api.github.com/repos/{repo}/issues/comments/{comment[id]}",
+            headers=get_headers(token),
         )
 
 
 def create_comment(comment, repo, pr_number, token):
     # repo is in the form of "org/repo"
+    print("creating new comment")
     requests.post(
         f"https://api.github.com/repos/{repo}/issues/{pr_number}/comments",
         data={"body": comment},
@@ -183,7 +186,6 @@ if __name__ == "__main__":
     token = os.environ["GITHUB_TOKEN"]
     pr_number = os.environ["PR_NUMBER"]
 
-    pprint(comments := get_lint_bot_comments(repo, token, pr_number))
-    delete_existing_messages(comments, repo, token)
+    delete_existing_messages(get_lint_bot_comments(repo, token, pr_number), repo, token)
     create_comment(message := get_message(), repo, pr_number, token)
     print(message)
