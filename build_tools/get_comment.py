@@ -3,7 +3,7 @@
 # This script fails if there are not comments to be posted.
 
 import os
-
+import warnings
 import requests
 
 
@@ -45,6 +45,8 @@ def get_step_message(log, start, end, title, message):
 
 
 def get_message():
+
+
     with open("linting_output.txt", "r") as f:
         log = f.read()
 
