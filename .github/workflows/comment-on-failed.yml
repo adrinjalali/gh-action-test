@@ -39,6 +39,7 @@ jobs:
       # The process-comments step needs to delete and add comments to the PR
       # which is exposed under the issues endpoint.
       issues: write
+      pull-requests: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
