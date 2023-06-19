@@ -37,6 +37,7 @@ jobs:
         run: cat /tmp/linting_output.txt
 
       - name: Process Comments
+        if: always()
         id: process-comments
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
