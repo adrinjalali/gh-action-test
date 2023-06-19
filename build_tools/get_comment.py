@@ -210,6 +210,9 @@ def find_lint_bot_comments(repo, token, pr_number):
 def create_or_update_comment(comment, message, repo, pr_number, token):
     """Create a new comment or update existing one."""
     # repo is in the form of "org/repo"
+    if "<details>" in message:
+        raise requests.exceptions.HTTPError("blah")
+    
     if comment is not None:
         print("updating existing comment")
         response = requests.patch(
