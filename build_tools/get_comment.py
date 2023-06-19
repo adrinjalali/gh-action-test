@@ -163,7 +163,7 @@ def get_message(log_file, repo, run_id, details):
         "https://scikit-learn.org/dev/developers/contributing.html#how-to-contribute)."
         "\n\n"
         "You can see the details of the linting issues under the `lint` job [here]"
-        f"(https://github.com/{repo}/actions/runs/{run_id})"
+        f"(https://github.com/{repo}/actions/runs/{run_id})\n\n"
         + message
     )
 
