@@ -7,7 +7,7 @@ import os
 import requests
 
 
-def get_step_message(log, start, end, title, message):
+def get_step_message(log, start, end, title, message, details):
     """Get the message for a specific test.
 
     Parameters
@@ -34,17 +34,22 @@ def get_step_message(log, start, end, title, message):
     """
     if end not in log:
         return ""
-    return (
+    res = (
         "-----------------------------------------------\n"
         + f"### {title}\n\n"
         + message
-        + "\n\n<details>\n\n```\n"
-        + log[log.find(start) + len(start) + 1 : log.find(end) - 1]
-        + "\n```\n\n</details>\n\n"
+        + "\n\n"
     )
+    if details:
+        res += (
+            "<details>\n\n```\n"
+            + log[log.find(start) + len(start) + 1 : log.find(end) - 1]
+            + "\n```\n\n</details>\n\n"
+        )
+    return res
 
 
-def get_message(log_file):
+def get_message(log_file, details):
     with open(log_file, "r") as f:
         log = f.read()
 
@@ -62,6 +67,7 @@ def get_message(log_file):
             "running black might also fix some of the issues which might be "
             "detected by `flake8`."
         ),
+        details=details,
     )
 
     # flake8
@@ -74,6 +80,7 @@ def get_message(log_file):
             "`flake8` detected issues. Please fix them locally and push the changes. "
             "Here you can see the detected issues."
         ),
+        details=details,
     )
 
     # mypy
@@ -86,6 +93,7 @@ def get_message(log_file):
             "`mypy` detected issues. Please fix them locally and push the changes. "
             "Here you can see the detected issues."
         ),
+        details=details,
     )
 
     # cython-lint
@@ -98,6 +106,7 @@ def get_message(log_file):
             "`cython-lint` detected issues. Please fix them locally and push "
             "the changes. Here you can see the detected issues."
         ),
+        details=details,
     )
 
     # deprecation order
@@ -110,6 +119,7 @@ def get_message(log_file):
             "Deprecation order check detected issues. Please fix them locally and "
             "push the changes. Here you can see the detected issues."
         ),
+        details=details,
     )
 
     # doctest directives
@@ -122,6 +132,7 @@ def get_message(log_file):
             "doctest directive check detected issues. Please fix them locally and "
             "push the changes. Here you can see the detected issues."
         ),
+        details=details,
     )
 
     # joblib imports
@@ -134,6 +145,7 @@ def get_message(log_file):
             "`joblib` import check detected issues. Please fix them locally and "
             "push the changes. Here you can see the detected issues."
         ),
+        details=details,
     )
 
     if not len(message):
@@ -227,12 +239,26 @@ if __name__ == "__main__":
         )
 
     comment = find_lint_bot_comments(repo, token, pr_number)
-    message = get_message(log_file)
-    create_or_update_comment(
-        comment=comment,
-        message=message,
-        repo=repo,
-        pr_number=pr_number,
-        token=token,
-    )
-    print(message)
+    try:
+        message = get_message(log_file, details=True)
+        create_or_update_comment(
+            comment=comment,
+            message=message,
+            repo=repo,
+            pr_number=pr_number,
+            token=token,
+        )
+        print(message)
+    except requests.HTTPError:
+        # The above fails if the message is too long. In that case, we
+        # try again without the details.
+        message = get_message(log_file, details=False)
+        create_or_update_comment(
+            comment=comment,
+            message=message,
+            repo=repo,
+            pr_number=pr_number,
+            token=token,
+        )
+        print(message)
+
