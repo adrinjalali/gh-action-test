@@ -165,8 +165,8 @@ def get_headers(token):
     }
 
 
-def get_lint_bot_comments(repo, token, pr_number):
-    """Get the comments from the linting bot."""
+def find_lint_bot_comments(repo, token, pr_number):
+    """Get the comment from the linting bot."""
     # repo is in the form of "org/repo"
     response = requests.get(
         f"https://api.github.com/repos/{repo}/issues/{pr_number}/comments",
@@ -180,35 +180,37 @@ def get_lint_bot_comments(repo, token, pr_number):
         "All linting checks passed. Your pull request is in excellent shape"
     )
 
-    return [
+    # Find all comments that match the linting bot, and return the first one.
+    # There should always be only one such comment, or none, if the PR is
+    # just created.
+    comments = [
         comment
         for comment in comments
         if comment["user"]["login"] == "github-actions[bot]"
         and (failed_comment in comment["body"] or success_comment in comment["body"])
     ]
 
+    return comments[0] if comments else None
 
-def delete_existing_messages(comments, repo, token):
-    """Delete the existing messages from the linting bot."""
+
+def create_or_update_comment(comment, message, repo, pr_number, token):
+    """Create a new comment or update existing one."""
     # repo is in the form of "org/repo"
-    print("deleting comments")
-    for comment in comments:
-        response = requests.delete(
+    if comment is not None:
+        print("updating existing comment")
+        response = requests.patch(
             f"https://api.github.com/repos/{repo}/issues/comments/{comment['id']}",
             headers=get_headers(token),
+            json={"body": message},
         )
-        response.raise_for_status()
+    else:
+        print("creating new comment")
+        response = requests.post(
+            f"https://api.github.com/repos/{repo}/issues/{pr_number}/comments",
+            headers=get_headers(token),
+            json={"body": message},
+        )
 
-
-def create_comment(comment, repo, pr_number, token):
-    """Create a new comment."""
-    # repo is in the form of "org/repo"
-    print("creating new comment")
-    response = requests.post(
-        f"https://api.github.com/repos/{repo}/issues/{pr_number}/comments",
-        json={"body": comment},
-        headers=get_headers(token),
-    )
     response.raise_for_status()
 
 
@@ -223,6 +225,13 @@ if __name__ == "__main__":
             "GITHUB_REPOSITORY, GITHUB_TOKEN, PR_NUMBER"
         )
 
-    delete_existing_messages(get_lint_bot_comments(repo, token, pr_number), repo, token)
-    create_comment(message := get_message(), repo, pr_number, token)
+    comment = find_lint_bot_comments(repo, token, pr_number)
+    message = get_message()
+    create_or_update_comment(
+        comment=comment,
+        message=get_message(),
+        repo=repo,
+        pr_number=pr_number,
+        token=token,
+    )
     print(message)

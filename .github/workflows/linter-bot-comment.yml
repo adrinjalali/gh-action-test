@@ -4,7 +4,11 @@
 name: linter
 
 on:
-  - pull_request
+  - pull_request_target
+
+permissions:
+  pull-requests: write
+  issues: write
 
 jobs:
   lint:
@@ -23,7 +27,7 @@ jobs:
         run: |
           source build_tools/shared.sh
           # Include pytest compatibility with mypy
-          pip install pytest flake8 $(get_dep mypy min) $(get_dep black min) cython-lint
+          pip install pytest flake8 $(get_dep mypy min) $(get_dep black min) cython-lint requests
 
       - name: Run linting
         run: ./build_tools/linting.sh &> /tmp/linting_output.txt
@@ -32,10 +36,9 @@ jobs:
         if: always()
         run: cat /tmp/linting_output.txt
 
-      - name: Upload Artifact
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: lint-log
-          path: /tmp/linting_output.txt
-          retention-days: 1
+      - name: Process Comments
+        id: process-comments
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.id }}
+        run: python ./build_tools/get_comment.py
