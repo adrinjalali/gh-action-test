@@ -43,6 +43,7 @@ jobs:
           retention-days: 1
 
   comment:
+    needs: lint
     runs-on: ubuntu-latest
 
     # We need these permissions to be able to post / update comments
