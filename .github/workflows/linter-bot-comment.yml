@@ -44,6 +44,7 @@ jobs:
 
   comment:
     needs: lint
+    if: always()
     runs-on: ubuntu-latest
 
     # We need these permissions to be able to post / update comments
