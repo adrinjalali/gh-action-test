@@ -41,5 +41,5 @@ jobs:
         id: process-comments
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.id }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: python ./build_tools/get_comment.py
