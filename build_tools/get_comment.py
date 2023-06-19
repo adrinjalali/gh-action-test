@@ -44,8 +44,8 @@ def get_step_message(log, start, end, title, message):
     )
 
 
-def get_message():
-    with open("linting_output.txt", "r") as f:
+def get_message(log_file):
+    with open(log_file, "r") as f:
         log = f.read()
 
     message = ""
@@ -218,18 +218,19 @@ if __name__ == "__main__":
     repo = os.environ["GITHUB_REPOSITORY"]
     token = os.environ["GITHUB_TOKEN"]
     pr_number = os.environ["PR_NUMBER"]
+    log_file = os.environ["LOG_FILE"]
 
-    if not repo or not token or not pr_number:
+    if not repo or not token or not pr_number or not log_file:
         raise ValueError(
             "One of the following environment variables is not set: "
-            "GITHUB_REPOSITORY, GITHUB_TOKEN, PR_NUMBER"
+            "GITHUB_REPOSITORY, GITHUB_TOKEN, PR_NUMBER, LOG_FILE"
         )
 
     comment = find_lint_bot_comments(repo, token, pr_number)
-    message = get_message()
+    message = get_message(log_file)
     create_or_update_comment(
         comment=comment,
-        message=get_message(),
+        message=message,
         repo=repo,
         pr_number=pr_number,
         token=token,

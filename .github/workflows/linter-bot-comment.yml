@@ -42,4 +42,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          LOG_FILE: /tmp/linting_output.txt
         run: python ./build_tools/get_comment.py
