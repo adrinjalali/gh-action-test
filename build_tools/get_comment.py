@@ -49,7 +49,7 @@ def get_step_message(log, start, end, title, message, details):
     return res
 
 
-def get_message(log_file, details):
+def get_message(log_file, repo, run_id, details):
     with open(log_file, "r") as f:
         log = f.read()
 
@@ -162,6 +162,8 @@ def get_message(log_file, details):
         "hooks. Instructions to enable them can be found [here]("
         "https://scikit-learn.org/dev/developers/contributing.html#how-to-contribute)."
         "\n\n"
+        "You can see the details of the linting issues under the `lint` job [here]"
+        f"(https://github.com/{repo}/actions/runs/{run_id})"
         + message
     )
 
@@ -231,16 +233,17 @@ if __name__ == "__main__":
     token = os.environ["GITHUB_TOKEN"]
     pr_number = os.environ["PR_NUMBER"]
     log_file = os.environ["LOG_FILE"]
+    run_id = os.environ["RUN_ID"]
 
-    if not repo or not token or not pr_number or not log_file:
+    if not repo or not token or not pr_number or not log_file or not run_id:
         raise ValueError(
             "One of the following environment variables is not set: "
-            "GITHUB_REPOSITORY, GITHUB_TOKEN, PR_NUMBER, LOG_FILE"
+            "GITHUB_REPOSITORY, GITHUB_TOKEN, PR_NUMBER, LOG_FILE, RUN_ID"
         )
 
     comment = find_lint_bot_comments(repo, token, pr_number)
     try:
-        message = get_message(log_file, details=True)
+        message = get_message(log_file, repo=repo, run_id=run_id, details=True)
         create_or_update_comment(
             comment=comment,
             message=message,
@@ -252,7 +255,7 @@ if __name__ == "__main__":
     except requests.HTTPError:
         # The above fails if the message is too long. In that case, we
         # try again without the details.
-        message = get_message(log_file, details=False)
+        message = get_message(log_file, repo=repo, run_id=run_id, details=False)
         create_or_update_comment(
             comment=comment,
             message=message,
@@ -261,4 +264,3 @@ if __name__ == "__main__":
             token=token,
         )
         print(message)
-
