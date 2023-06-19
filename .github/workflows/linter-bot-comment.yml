@@ -64,7 +64,7 @@ jobs:
 
       - name: Download artifact
         id: download-artifact
-        uses: dawidd6/action-download-artifact@v3
+        uses: actions/download-artifact@v3
         with:
           name: lint-log
 
