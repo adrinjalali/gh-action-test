@@ -248,6 +248,9 @@ def create_or_update_comment(comment, message, repo, pr_number, token):
 
 
 if __name__ == "__main__":
+    for key, value in os.environ.items():
+        print(f"{key}={value}")
+
     repo = os.environ["GITHUB_REPOSITORY"]
     token = os.environ["GITHUB_TOKEN"]
     pr_number = os.environ["PR_NUMBER"]
