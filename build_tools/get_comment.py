@@ -154,7 +154,6 @@ def get_message(log_file, repo, pr_number, sha, run_id, details):
     commit_link = (
         "\n\nGenerated for commit:"
         f" [link](https://github.com/{repo}/pull/{pr_number}/commits/{sha})"
-        + commit_link
     )
 
     if not message:
@@ -162,6 +161,7 @@ def get_message(log_file, repo, pr_number, sha, run_id, details):
         return (
             "## Linting Passed\n"
             "All linting checks passed. Your pull request is in excellent shape! ☀️"
+            + commit_link
         )
 
     message = (
