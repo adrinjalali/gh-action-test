@@ -27,6 +27,9 @@ def get_step_message(log, start, end, title, message, details):
     message : str
         The message to be added at the beginning of the section.
 
+    details : bool
+        Whether to add the details of each step.
+
     Returns
     -------
     message : str
@@ -49,7 +52,7 @@ def get_step_message(log, start, end, title, message, details):
     return res
 
 
-def get_message(log_file, repo, run_id, details):
+def get_message(log_file, repo, pr_number, sha, run_id, details):
     with open(log_file, "r") as f:
         log = f.read()
 
@@ -148,11 +151,17 @@ def get_message(log_file, repo, run_id, details):
         details=details,
     )
 
-    if not len(message):
+    commit_link = (
+        "\n\nGenerated for commit:"
+        f" [link](https://github.com/{repo}/pull/{pr_number}/commits/{sha})"
+        + commit_link
+    )
+
+    if not message:
         # no issues detected, so this script "fails"
         return (
             "## Linting Passed\n"
-            "All linting checks passed. Your pull request is in excellent shape!"
+            "All linting checks passed. Your pull request is in excellent shape! ☀️"
         )
 
     message = (
@@ -165,6 +174,7 @@ def get_message(log_file, repo, run_id, details):
         "You can see the details of the linting issues under the `lint` job [here]"
         f"(https://github.com/{repo}/actions/runs/{run_id})\n\n"
         + message
+        + commit_link
     )
 
     return message
@@ -182,12 +192,13 @@ def get_headers(token):
 def find_lint_bot_comments(repo, token, pr_number):
     """Get the comment from the linting bot."""
     # repo is in the form of "org/repo"
+    # API doc: https://docs.github.com/en/rest/issues/comments?apiVersion=2022-11-28#list-issue-comments  # noqa
     response = requests.get(
         f"https://api.github.com/repos/{repo}/issues/{pr_number}/comments",
         headers=get_headers(token),
     )
     response.raise_for_status()
-    comments = response.json()
+    all_comments = response.json()
 
     failed_comment = "This PR is introducing linting issues. Here's a summary of the"
     success_comment = (
@@ -199,10 +210,16 @@ def find_lint_bot_comments(repo, token, pr_number):
     # just created.
     comments = [
         comment
-        for comment in comments
+        for comment in all_comments
         if comment["user"]["login"] == "github-actions[bot]"
         and (failed_comment in comment["body"] or success_comment in comment["body"])
     ]
+
+    if len(all_comments) > 25 and not comments:
+        # By default the API returns the first 30 comments. If we can't find the
+        # comment created by the bot in those, then we raise and we skip creating
+        # a comment in the first place.
+        raise RuntimeError("Comment not found in the first 30 comments.")
 
     return comments[0] if comments else None
 
@@ -210,11 +227,9 @@ def find_lint_bot_comments(repo, token, pr_number):
 def create_or_update_comment(comment, message, repo, pr_number, token):
     """Create a new comment or update existing one."""
     # repo is in the form of "org/repo"
-    if "<details>" in message:
-        raise requests.exceptions.HTTPError("blah")
-    
     if comment is not None:
         print("updating existing comment")
+        # API doc: https://docs.github.com/en/rest/issues/comments?apiVersion=2022-11-28#update-an-issue-comment  # noqa
         response = requests.patch(
             f"https://api.github.com/repos/{repo}/issues/comments/{comment['id']}",
             headers=get_headers(token),
@@ -222,6 +237,7 @@ def create_or_update_comment(comment, message, repo, pr_number, token):
         )
     else:
         print("creating new comment")
+        # API doc: https://docs.github.com/en/rest/issues/comments?apiVersion=2022-11-28#create-an-issue-comment  # noqa
         response = requests.post(
             f"https://api.github.com/repos/{repo}/issues/{pr_number}/comments",
             headers=get_headers(token),
@@ -235,6 +251,7 @@ if __name__ == "__main__":
     repo = os.environ["GITHUB_REPOSITORY"]
     token = os.environ["GITHUB_TOKEN"]
     pr_number = os.environ["PR_NUMBER"]
+    sha = os.environ["GITHUB_SHA"]
     log_file = os.environ["LOG_FILE"]
     run_id = os.environ["RUN_ID"]
 
@@ -244,9 +261,14 @@ if __name__ == "__main__":
             "GITHUB_REPOSITORY, GITHUB_TOKEN, PR_NUMBER, LOG_FILE, RUN_ID"
         )
 
-    comment = find_lint_bot_comments(repo, token, pr_number)
     try:
-        message = get_message(log_file, repo=repo, run_id=run_id, details=True)
+        comment = find_lint_bot_comments(repo, token, pr_number)
+    except RuntimeError:
+        print("Comment not found in the first 30 comments. Skipping!")
+        exit(0)
+
+    try:
+        message = get_message(log_file, repo=repo, sha=sha, run_id=run_id, details=True)
         create_or_update_comment(
             comment=comment,
             message=message,
@@ -258,7 +280,9 @@ if __name__ == "__main__":
     except requests.HTTPError:
         # The above fails if the message is too long. In that case, we
         # try again without the details.
-        message = get_message(log_file, repo=repo, run_id=run_id, details=False)
+        message = get_message(
+            log_file, repo=repo, sha=sha, run_id=run_id, details=False
+        )
         create_or_update_comment(
             comment=comment,
             message=message,
