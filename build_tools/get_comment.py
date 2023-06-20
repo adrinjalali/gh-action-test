@@ -268,7 +268,14 @@ if __name__ == "__main__":
         exit(0)
 
     try:
-        message = get_message(log_file, repo=repo, sha=sha, run_id=run_id, details=True)
+        message = get_message(
+            log_file,
+            repo=repo,
+            pr_number=pr_number,
+            sha=sha,
+            run_id=run_id,
+            details=True,
+        )
         create_or_update_comment(
             comment=comment,
             message=message,
@@ -281,7 +288,12 @@ if __name__ == "__main__":
         # The above fails if the message is too long. In that case, we
         # try again without the details.
         message = get_message(
-            log_file, repo=repo, sha=sha, run_id=run_id, details=False
+            log_file,
+            repo=repo,
+            pr_number=pr_number,
+            sha=sha,
+            run_id=run_id,
+            details=False,
         )
         create_or_update_comment(
             comment=comment,
