@@ -254,7 +254,7 @@ if __name__ == "__main__":
     repo = os.environ["GITHUB_REPOSITORY"]
     token = os.environ["GITHUB_TOKEN"]
     pr_number = os.environ["PR_NUMBER"]
-    sha = os.environ["GITHUB_SHA"]
+    sha = os.environ["BRANCH_SHA"]
     log_file = os.environ["LOG_FILE"]
     run_id = os.environ["RUN_ID"]
 
