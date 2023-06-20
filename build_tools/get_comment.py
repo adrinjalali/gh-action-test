@@ -152,8 +152,8 @@ def get_message(log_file, repo, pr_number, sha, run_id, details):
     )
 
     commit_link = (
-        "\n\nGenerated for commit:"
-        f" [link](https://github.com/{repo}/pull/{pr_number}/commits/{sha})"
+        "\n\n_Generated for commit:"
+        f" [{sha[:7]}](https://github.com/{repo}/pull/{pr_number}/commits/{sha})_"
     )
 
     if not message:
