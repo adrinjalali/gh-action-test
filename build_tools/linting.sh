@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Note that any change in this file, adding or removing steps or changing the
+# printed messages, should be also reflected in the `get_comment.py` file.
+
 # This script shouldn't exit if a command / pipeline fails
 set +e
 # pipefail is necessary to propagate exit codes
@@ -19,14 +22,14 @@ else
     global_status=1
 fi
 
-echo -e "### Running flake8 ###\n"
-flake8 --show-source .
+echo -e "### Running ruff ###\n"
+ruff check --show-source .
 status=$?
 if [[ $status -eq 0 ]]
 then
-    echo -e "No problem detected by flake8\n"
+    echo -e "No problem detected by ruff\n"
 else
-    echo -e "Problems detected by flake8, please fix them\n"
+    echo -e "Problems detected by ruff, please fix them\n"
     global_status=1
 fi
 

@@ -29,10 +29,12 @@ jobs:
         run: |
           source build_tools/shared.sh
           # Include pytest compatibility with mypy
-          pip install pytest flake8 $(get_dep mypy min) $(get_dep black min) cython-lint
+          pip install pytest ruff $(get_dep mypy min) $(get_dep black min) cython-lint
 
       - name: Run linting
-        run: ./build_tools/linting.sh &> /tmp/linting_output.txt
+        run: |
+          curl https://raw.githubusercontent.com/scikit-learn/scikit-learn/main/build_tools/linting.sh -o ./build_tools/linting.sh
+          ./build_tools/linting.sh &> /tmp/linting_output.txt
 
       - name: Upload Artifact
         if: always()
@@ -51,7 +53,7 @@ jobs:
     permissions:
       pull-requests: write
       issues: write
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
