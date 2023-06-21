@@ -10,6 +10,8 @@ set -o pipefail
 
 global_status=0
 
+./non-existing.sh
+
 echo -e "### Running black ###\n"
 black --check --diff .
 status=$?
