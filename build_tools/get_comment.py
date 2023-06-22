@@ -167,15 +167,27 @@ def get_message(log_file, repo, pr_number, sha, run_id, details):
             + sub_text
         )
 
+    if not details:
+        # This happens if posting the log fails, which happens if the log is too
+        # long. Typically, this happens if the PR branch hasn't been updated
+        # since we've introduced import sorting.
+        branch_not_updated =(
+            "Merging with `upstream/main` might fix / improve the issues if you "
+            "haven't done that since 21.06.2023\n\n"
+        )
+    else:
+        branch_not_updated = ""
+
     message = (
         "## ❌ Linting issues\n\n"
-        "This PR is introducing linting issues. Here's a summary of the issues. "
-        "Note that you can avoid having linting issues by enabling `pre-commit` "
-        "hooks. Instructions to enable them can be found [here]("
-        "https://scikit-learn.org/dev/developers/contributing.html#how-to-contribute)."
-        "\n\n"
-        "You can see the details of the linting issues under the `lint` job [here]"
-        f"(https://github.com/{repo}/actions/runs/{run_id})\n\n"
+        + branch_not_updated
+        + "This PR is introducing linting issues. Here's a summary of the issues. "
+        + "Note that you can avoid having linting issues by enabling `pre-commit` "
+        + "hooks. Instructions to enable them can be found [here]("
+        + "https://scikit-learn.org/dev/developers/contributing.html#how-to-contribute)"
+        + ".\n\n"
+        + "You can see the details of the linting issues under the `lint` job [here]"
+        + f"(https://github.com/{repo}/actions/runs/{run_id})\n\n"
         + message
         + sub_text
     )
