@@ -171,9 +171,9 @@ def get_message(log_file, repo, pr_number, sha, run_id, details):
         # This happens if posting the log fails, which happens if the log is too
         # long. Typically, this happens if the PR branch hasn't been updated
         # since we've introduced import sorting.
-        branch_not_updated =(
-            "Merging with `upstream/main` might fix / improve the issues if you "
-            "haven't done that since 21.06.2023\n\n"
+        branch_not_updated = (
+            "_Merging with `upstream/main` might fix / improve the issues if you "
+            "haven't done that since 21.06.2023._\n\n"
         )
     else:
         branch_not_updated = ""
@@ -291,7 +291,6 @@ if __name__ == "__main__":
             run_id=run_id,
             details=True,
         )
-        raise requests.HTTPError()
         create_or_update_comment(
             comment=comment,
             message=message,
