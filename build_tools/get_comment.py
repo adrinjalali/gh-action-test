@@ -291,6 +291,7 @@ if __name__ == "__main__":
             run_id=run_id,
             details=True,
         )
+        raise requests.HTTPError()
         create_or_update_comment(
             comment=comment,
             message=message,
