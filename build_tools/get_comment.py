@@ -154,8 +154,8 @@ def get_message(log_file, repo, pr_number, sha, run_id, details):
 
     sub_text = (
         "\n\n<sub> _Generated for commit:"
-        f" [{sha[:7]}](https://github.com/{repo}/pull/{pr_number}/commits/{sha}) "
-        "Link to the linter CI [here]"
+        f" [{sha[:7]}](https://github.com/{repo}/pull/{pr_number}/commits/{sha}). "
+        "Link to the linter CI: [here]"
         f"(https://github.com/{repo}/actions/runs/{run_id})_ </sub>"
     )
 
