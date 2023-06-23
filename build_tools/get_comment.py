@@ -63,7 +63,7 @@ def get_message(log_file, repo, pr_number, sha, run_id, details):
         f"(https://github.com/{repo}/actions/runs/{run_id})_ </sub>"
     )
 
-    if "### Linting finished" not in log:
+    if "Linting completed" not in log:
         return (
             "## ❌ Linting issues\n\n"
             "There was an issue running the linter job. Please update with "

@@ -113,7 +113,7 @@ else
     global_status=1
 fi
 
-echo -e "### Linting finished ###\n"
+echo -e "Linting completed\n"
 
 if [[ $global_status -eq 1 ]]
 then
