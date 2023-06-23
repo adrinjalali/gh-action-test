@@ -73,7 +73,7 @@ jobs:
           python-version: 3.11
 
       - name: Install dependencies
-        run: python -m pip install requests
+        run: python -m pip install requests ruff $(get_dep mypy min) $(get_dep black min) cython-lint
 
       - name: Download artifact
         id: download-artifact
