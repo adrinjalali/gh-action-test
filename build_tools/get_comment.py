@@ -56,6 +56,13 @@ def get_message(log_file, repo, pr_number, sha, run_id, details):
     with open(log_file, "r") as f:
         log = f.read()
 
+    sub_text = (
+        "\n\n<sub> _Generated for commit:"
+        f" [{sha[:7]}](https://github.com/{repo}/pull/{pr_number}/commits/{sha}). "
+        "Link to the linter CI: [here]"
+        f"(https://github.com/{repo}/actions/runs/{run_id})_ </sub>"
+    )
+
     if "### Linting finished" not in log:
         return (
             "## ❌ Linting failed\n\n"
@@ -64,7 +71,8 @@ def get_message(log_file, repo, pr_number, sha, run_id, details):
             "https://scikit-learn.org/dev/developers/contributing.html"
             "#how-to-contribute)) and push the changes. If you already have done "
             "that, please send an empty commit with `git commit --allow-empty` "
-            "and push the changes to trigger the CI."
+            "and push the changes to trigger the CI.\n\n"
+            + sub_text
         )
 
     message = ""
@@ -166,13 +174,6 @@ def get_message(log_file, repo, pr_number, sha, run_id, details):
             "push the changes. Here you can see the detected issues."
         ),
         details=details,
-    )
-
-    sub_text = (
-        "\n\n<sub> _Generated for commit:"
-        f" [{sha[:7]}](https://github.com/{repo}/pull/{pr_number}/commits/{sha}). "
-        "Link to the linter CI: [here]"
-        f"(https://github.com/{repo}/actions/runs/{run_id})_ </sub>"
     )
 
     if not message:
