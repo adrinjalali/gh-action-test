@@ -65,7 +65,7 @@ def get_message(log_file, repo, pr_number, sha, run_id, details):
 
     if "### Linting finished" not in log:
         return (
-            "## ❌ Linting failed\n\n"
+            "## ❌ Linting issues\n\n"
             "There was an issue running the linter job. Please update with "
             "`upstream/main` ([link]("
             "https://scikit-learn.org/dev/developers/contributing.html"
