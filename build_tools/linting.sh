@@ -117,7 +117,7 @@ echo -e "Linting completed\n"
 
 if [[ $global_status -eq 1 ]]
 then
-    echo -e "Linting failed\n"
+    echo -e "Linting failed blah\n"
     exit 1
 else
     echo -e "Linting passed\n"
