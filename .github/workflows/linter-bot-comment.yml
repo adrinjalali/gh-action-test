@@ -40,7 +40,7 @@ jobs:
         # We download the linting script from main, since this workflow is run
         # from main itself.
         run: |
-          curl https://raw.githubusercontent.com/scikit-learn/scikit-learn/main/build_tools/linting.sh --retry 5 -o ./build_tools/linting.sh
+          curl https://raw.githubusercontent.com/${{ github.repository }}/main/build_tools/linting.sh --retry 5 -o ./build_tools/linting.sh
           set +e
           ./build_tools/linting.sh &> /tmp/linting_output.txt
           cat /tmp/linting_output.txt
