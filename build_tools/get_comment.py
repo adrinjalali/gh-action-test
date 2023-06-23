@@ -3,9 +3,26 @@
 # This script fails if there are not comments to be posted.
 
 import os
-from importlib.metadata import version
 import requests
 
+def get_versions(versions_file):
+    """Get the versions of the packages used in the linter job.
+
+    Parameters
+    ----------
+    versions_file : str
+        The path to the file that contains the versions of the packages.
+
+    Returns
+    -------
+    versions : dict
+        A dictionary with the versions of the packages.
+    """
+    with open(versions_file, "r") as f:
+        versions = f.read().splitlines()
+    versions = [v.split("=") for v in versions]
+    versions = {v[0]: v[1] for v in versions}
+    return versions
 
 def get_step_message(log, start, end, title, message, details):
     """Get the message for a specific test.
@@ -52,7 +69,7 @@ def get_step_message(log, start, end, title, message, details):
     return res
 
 
-def get_message(log_file, repo, pr_number, sha, run_id, details):
+def get_message(log_file, repo, pr_number, sha, run_id, details, versions):
     with open(log_file, "r") as f:
         log = f.read()
 
@@ -88,7 +105,7 @@ def get_message(log_file, repo, pr_number, sha, run_id, details):
             "the changes. Here you can see the detected issues. Note that "
             "running black might also fix some of the issues which might be "
             "detected by `ruff`. Note that the installed `black` version is "
-            f"`black={version('black')}`."
+            f"`black={versions['black']}`."
         ),
         details=details,
     )
@@ -103,7 +120,7 @@ def get_message(log_file, repo, pr_number, sha, run_id, details):
             "`ruff` detected issues. Please run `ruff --fix --show-source .` "
             "locally, fix the remaining issues, and push the changes. "
             "Here you can see the detected issues. Note that the installed "
-            f"`ruff` version is `ruff={version('ruff')}`."
+            f"`ruff` version is `ruff={versions['ruff']}`."
         ),
         details=details,
     )
@@ -117,7 +134,7 @@ def get_message(log_file, repo, pr_number, sha, run_id, details):
         message=(
             "`mypy` detected issues. Please fix them locally and push the changes. "
             "Here you can see the detected issues. Note that the installed `mypy` "
-            f"version is `mypy={version('mypy')}`."
+            f"version is `mypy={versions['mypy']}`."
         ),
         details=details,
     )
@@ -132,7 +149,7 @@ def get_message(log_file, repo, pr_number, sha, run_id, details):
             "`cython-lint` detected issues. Please fix them locally and push "
             "the changes. Here you can see the detected issues. Note that the "
             "installed `cython-lint` version is "
-            f"`cython-lint={version('cython-lint')}`."
+            f"`cython-lint={versions['cython-lint']}`."
         ),
         details=details,
     )
@@ -284,6 +301,9 @@ if __name__ == "__main__":
     sha = os.environ["BRANCH_SHA"]
     log_file = os.environ["LOG_FILE"]
     run_id = os.environ["RUN_ID"]
+    versions_file = os.environ["VERSIONS_FILE"]
+
+    versions = get_versions(versions_file)
 
     if not repo or not token or not pr_number or not log_file or not run_id:
         raise ValueError(
@@ -305,6 +325,7 @@ if __name__ == "__main__":
             sha=sha,
             run_id=run_id,
             details=True,
+            versions=versions,
         )
         create_or_update_comment(
             comment=comment,
@@ -324,6 +345,7 @@ if __name__ == "__main__":
             sha=sha,
             run_id=run_id,
             details=False,
+            versions=versions,
         )
         create_or_update_comment(
             comment=comment,
