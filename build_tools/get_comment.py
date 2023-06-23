@@ -231,10 +231,8 @@ def find_lint_bot_comments(repo, token, pr_number):
     response.raise_for_status()
     all_comments = response.json()
 
-    failed_comment = "This PR is introducing linting issues. Here's a summary of the"
-    success_comment = (
-        "All linting checks passed. Your pull request is in excellent shape"
-    )
+    failed_comment = "❌ Linting issues"
+    success_comment = "✔️ Linting Passed"
 
     # Find all comments that match the linting bot, and return the first one.
     # There should always be only one such comment, or none, if the PR is
