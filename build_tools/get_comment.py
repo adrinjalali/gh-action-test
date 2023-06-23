@@ -3,7 +3,9 @@
 # This script fails if there are not comments to be posted.
 
 import os
+
 import requests
+
 
 def get_versions(versions_file):
     """Get the versions of the packages used in the linter job.
@@ -18,11 +20,9 @@ def get_versions(versions_file):
     versions : dict
         A dictionary with the versions of the packages.
     """
-    with open(versions_file, "r") as f:
-        versions = f.read().splitlines()
-    versions = [v.split("=") for v in versions]
-    versions = {v[0]: v[1] for v in versions}
-    return versions
+    with open("versions.txt", "r") as f:
+        return dict(line.strip().split("=") for line in f)
+
 
 def get_step_message(log, start, end, title, message, details):
     """Get the message for a specific test.
