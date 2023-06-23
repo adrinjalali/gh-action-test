@@ -3,7 +3,7 @@
 # This script fails if there are not comments to be posted.
 
 import os
-
+from importlib.metadata import version
 import requests
 
 
@@ -56,6 +56,17 @@ def get_message(log_file, repo, pr_number, sha, run_id, details):
     with open(log_file, "r") as f:
         log = f.read()
 
+    if "### Linting finished" not in log:
+        return (
+            "## ❌ Linting failed\n\n"
+            "There was an issue running the linter job. Please update with "
+            "`upstream/main` ([link]("
+            "https://scikit-learn.org/dev/developers/contributing.html"
+            "#how-to-contribute)) and push the changes. If you already have done "
+            "that, please send an empty commit with `git commit --allow-empty` "
+            "and push the changes to trigger the CI."
+        )
+
     message = ""
 
     # black
@@ -68,7 +79,8 @@ def get_message(log_file, repo, pr_number, sha, run_id, details):
             "`black` detected issues. Please run `black .` locally and push "
             "the changes. Here you can see the detected issues. Note that "
             "running black might also fix some of the issues which might be "
-            "detected by `ruff`."
+            "detected by `ruff`. Note that the installed `black` version is "
+            f"`black={version('black')}`."
         ),
         details=details,
     )
@@ -82,7 +94,8 @@ def get_message(log_file, repo, pr_number, sha, run_id, details):
         message=(
             "`ruff` detected issues. Please run `ruff --fix --show-source .` "
             "locally, fix the remaining issues, and push the changes. "
-            "Here you can see the detected issues."
+            "Here you can see the detected issues. Note that the installed "
+            f"`ruff` version is `ruff={version('ruff')}`."
         ),
         details=details,
     )
@@ -95,7 +108,8 @@ def get_message(log_file, repo, pr_number, sha, run_id, details):
         title="`mypy`",
         message=(
             "`mypy` detected issues. Please fix them locally and push the changes. "
-            "Here you can see the detected issues."
+            "Here you can see the detected issues. Note that the installed `mypy` "
+            f"version is `mypy={version('mypy')}`."
         ),
         details=details,
     )
@@ -108,7 +122,9 @@ def get_message(log_file, repo, pr_number, sha, run_id, details):
         title="`cython-lint`",
         message=(
             "`cython-lint` detected issues. Please fix them locally and push "
-            "the changes. Here you can see the detected issues."
+            "the changes. Here you can see the detected issues. Note that the "
+            "installed `cython-lint` version is "
+            f"`cython-lint={version('cython-lint')}`."
         ),
         details=details,
     )
