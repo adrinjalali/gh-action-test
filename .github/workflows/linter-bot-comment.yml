@@ -73,7 +73,12 @@ jobs:
           python-version: 3.11
 
       - name: Install dependencies
-        run: python -m pip install requests ruff $(get_dep mypy min) $(get_dep black min) cython-lint
+        run: |
+          python -m pip install requests ruff $(get_dep mypy min) $(get_dep black min) cython-lint
+          python -c "from importlib.metadata import version; print(version('ruff'))"
+          python -c "from importlib.metadata import version; print(version('mypy'))"
+          python -c "from importlib.metadata import version; print(version('black'))"
+          python -c "from importlib.metadata import version; print(version('cython-lint'))"
 
       - name: Download artifact
         id: download-artifact
